@@ -1,81 +1,80 @@
 package com.example.myapplication;
 
-import android.app.Application;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.EventListener;
-import java.util.EventObject;
 import java.net.DatagramSocket;
 
 
-// Roughly analogous to .NET EventArgs
-class ClickEvent extends EventObject {
-    public ClickEvent(Object source) {
-        super(source);
-    }
-}
 
-// Roughly analogous to .NET delegate
-interface clientListener extends EventListener {
-    void clientRecieved(ClickEvent e);
-}
 
-public class Server {
+public class Server extends Connection{
 
     int port;
     String address;
-
-
     ServerSocket server;
-    Socket client = null;
+
+
+    private class WaitForClientThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                    socket = server.accept();
+                    setIOStreams();
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.onClientReceived();
+                        }
+                    });
+                    
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public Server(int port) {
+    public Server(int port,MainActivity mainActivity) throws InterruptedException {
         this.port = port;
+        this.mainActivity = mainActivity;
         try {
             server = new ServerSocket(this.port);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-        try(final DatagramSocket socket = new DatagramSocket()){
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-            address = socket.getLocalAddress().getHostAddress().toString();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-
-    public void start() {
-        try {
-            Socket socket = server.accept();
-            client = socket;
-
-
-        }  catch (SocketException e) {
-            if (server!=null) {
-                try {
-                    server.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try(final DatagramSocket socket = new DatagramSocket()){
+                    socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+                    address = socket.getLocalAddress().getHostAddress().toString();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (SocketException e) {
+                    e.printStackTrace();
                 }
             }
-            server = null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        });
+        th.start();
+        th.join();
 
     }
+
+    @Override
+    public void connect() {
+
+        if (!isConnected() && server != null){
+            Thread waitForClientThread = new Thread(new WaitForClientThread());
+            waitForClientThread.start();
+        }
+    }
+
 
     public void stop(){
         try {
@@ -86,7 +85,9 @@ public class Server {
         }
     }
 
-    public boolean isClientConnected() { return client == null; }
+
+
+
 
     //private BeginAccept(){
 

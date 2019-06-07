@@ -22,7 +22,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
-        <LinearLayout android:layout_width="wrap_content"
+        <LinearLayout android:layout_width="wrap_content" android:id="@+id/serverButtons"
                       android:layout_height="wrap_content"
                       android:orientation="horizontal" android:layout_below="@id/ipTextView"
                       android:layout_centerHorizontal="true" >
@@ -45,6 +45,44 @@
             />
 
         </LinearLayout>
+        <LinearLayout android:layout_marginTop="50dp"
+                android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+        android:layout_below="@+id/serverButtons" android:layout_centerHorizontal="true" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textAlignment="center" android:textSize="16dp"
+            android:text="Type server address:port"
+                      android:gravity="center_horizontal"
+            >
+
+            </TextView>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:orientation="horizontal"   android:gravity="center">
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:digits="012346789."
+                        android:ems="8"
+                        android:id="@+id/editTextIp"/>
+                <TextView android:textSize="30dp"  android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":"/>
+
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:digits="012346789"
+                        android:ems="4"
+                        android:id="@+id/editTextPort"/>
+            </LinearLayout>
+            <Button android:gravity="center_horizontal"
+                    android:text="Connect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/button"
+                    android:onClick="connectClick"/>
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 

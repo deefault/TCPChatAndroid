@@ -14,19 +14,19 @@ import java.util.List;
 
 public class Message {
     private String text;
-    private boolean belongsToCurrentUser;
+    private boolean fromCurrentUser;
 
-    public Message(String text, boolean belongsToCurrentUser) {
+    public Message(String text, boolean fromCurrentUser) {
         this.text = text;
-        this.belongsToCurrentUser = belongsToCurrentUser;
+        this.fromCurrentUser = fromCurrentUser;
     }
 
     public String getText() {
         return text;
     }
 
-    public boolean isBelongsToCurrentUser() {
-        return belongsToCurrentUser;
+    public boolean isFromCurrentUser() {
+        return fromCurrentUser;
     }
 }
 
