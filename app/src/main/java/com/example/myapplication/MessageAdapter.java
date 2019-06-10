@@ -9,7 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static android.text.format.DateUtils.formatDateTime;
 
 public class MessageAdapter extends BaseAdapter {
 
@@ -48,22 +51,22 @@ public class MessageAdapter extends BaseAdapter {
 
         if (message.isFromCurrentUser()) {
             convertView = messageInflater.inflate(R.layout.my_message, null);
-            holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
-            convertView.setTag(holder);
-            holder.messageBody.setText(message.getText());
+
         } else {
             convertView = messageInflater.inflate(R.layout.theirs_message, null);
-
-            holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
-            convertView.setTag(holder);
-            holder.messageBody.setText(message.getText());
         }
-
+        holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
+        holder.time = (TextView) convertView.findViewById(R.id.message_time);
+        convertView.setTag(holder);
+        holder.messageBody.setText(message.getText());
+        holder.time.setText(message.getTimeString());
         return convertView;
     }
 
     class MessageViewHolder {
         public TextView messageBody;
+        public TextView time;
+
     }
 
 }

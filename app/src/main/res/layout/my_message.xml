@@ -19,5 +19,15 @@
             android:layout_alignParentRight="true"
             android:text="Placeholder message"
     />
+    <TextView
+            android:id="@+id/message_time"
+            android:text="11:40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_toLeftOf="@id/message_body"
+            android:layout_alignBottom="@id/message_body"
 
+            android:layout_marginLeft="4dp"
+/>
 </RelativeLayout>

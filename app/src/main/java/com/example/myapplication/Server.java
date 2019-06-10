@@ -18,9 +18,11 @@ public class Server extends Connection{
 
 
     private class WaitForClientThread extends Thread {
+
         @Override
         public void run() {
             try {
+
                     socket = server.accept();
                     setIOStreams();
                     mainActivity.runOnUiThread(new Runnable() {
@@ -71,6 +73,7 @@ public class Server extends Connection{
 
         if (!isConnected() && server != null){
             Thread waitForClientThread = new Thread(new WaitForClientThread());
+            waitForClientThread.setName("waitForClientThread");
             waitForClientThread.start();
         }
     }

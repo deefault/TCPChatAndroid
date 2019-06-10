@@ -15,18 +15,15 @@ public abstract class Connection {
     protected InputThread inputThread;
     protected boolean readMessages=false;
 
-    public boolean isConnected() { return socket == null; }
+    public boolean isConnected() { return socket != null; }
 
-    public void connect(){
-        if (socket != null){
-            setIOStreams();
-        }
-    }
+    public abstract void connect();
+
 
     protected void setIOStreams(){
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream());
+            out = new PrintWriter(socket.getOutputStream(),true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,18 +39,23 @@ public abstract class Connection {
         Thread sendThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                out.write(text);
+                out.println(text);
                 //onWriteCompleted();
             }
         });
+        sendThread.start();
     }
 
     public void startGettingIncomingMessages(){
-        readMessages = true;
-        if (inputThread == null){
-            inputThread = new InputThread();
-            inputThread.start();
+        if (socket.isConnected()){
+            readMessages = true;
+            if (inputThread == null){
+                inputThread = new InputThread();
+                inputThread.setName("InputThread");
+                inputThread.start();
+            }
         }
+
     }
 
     public void stopGettingIncomingMessages(){
@@ -70,7 +72,7 @@ public abstract class Connection {
                         onDataReceived(line);
                     }
                     else {
-                        Thread.yield();
+                        //Thread.yield();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

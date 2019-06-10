@@ -3,6 +3,7 @@ package com.example.myapplication;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class Client extends Connection{
     String serverAddress;
@@ -12,16 +13,20 @@ public class Client extends Connection{
     private class ServerConnectionThread extends Thread {
         @Override
         public void run() {
+
             try {
                 socket.connect(new InetSocketAddress(serverAddress,port),4000);
-                if (socket.isConnected()){
-                    setIOStreams();
-                }
-                else {
-                    connectionTimeoutCallback();
-                }
+            } catch (SocketTimeoutException e) {
+                connectionTimeoutCallback();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if (socket.isConnected()){
+                setIOStreams();
+                connectionCallback();
+            }
+            else {
+                connectionTimeoutCallback();
             }
         }
     }
@@ -31,6 +36,15 @@ public class Client extends Connection{
             @Override
             public void run() {
                 mainActivity.onServerConnectionTimeout();
+            }
+        });
+    }
+
+    private void connectionCallback() {
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mainActivity.onServerConnected();
             }
         });
     }
@@ -51,17 +65,6 @@ public class Client extends Connection{
         if (!isConnected()){
             Thread serverConnectionThread = new Thread(new ServerConnectionThread());
             serverConnectionThread.start();
-            try {
-                serverConnectionThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            mainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mainActivity.onServerConnected();
-                }
-            });
         }
     }
 

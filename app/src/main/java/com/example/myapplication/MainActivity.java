@@ -2,7 +2,10 @@ package com.example.myapplication;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.*;
@@ -31,6 +34,7 @@ public class MainActivity extends ServiceActivity {
     TextView ipTextView;
     EditText editTextPort;
     EditText editTextIp;
+    private ProgressDialog progress;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -47,14 +51,15 @@ public class MainActivity extends ServiceActivity {
         editTextPort = findViewById(R.id.editTextPort);
         editTextIp = findViewById(R.id.editTextIp);
 
+
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-        Intent intent = new Intent(this,TCPService.class);
-        startService(intent);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        Intent activityIntent = new Intent(this,TCPService.class);
+        //startService(activityIntent);
+        bindService(activityIntent, connection, BIND_AUTO_CREATE);
     }
 
     public void onClientReceived() {
@@ -62,7 +67,7 @@ public class MainActivity extends ServiceActivity {
     }
 
     public void switchToChatActivity(){
-        unbindService(connection);
+        //unbindService(connection);
         Intent intent = new Intent(this, ChatActivity.class);
         startActivity(intent);
     }
@@ -104,10 +109,27 @@ public class MainActivity extends ServiceActivity {
 
 
     public void onServerConnected() {
+        progress.dismiss();
+        service.setClient(client);
         switchToChatActivity();
     }
 
     public void onServerConnectionTimeout() {
+        progress.dismiss();
+       new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Connection error")
+                .setMessage("Connection timeout or refused")
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        editTextPort.clearComposingText();
+                        editTextIp.clearComposingText();
+                    }
+                })
+
+                .setIcon(android.R.drawable.ic_dialog_alert).show();
 
     }
 
@@ -134,6 +156,12 @@ public class MainActivity extends ServiceActivity {
             if (!error){
                 client = new Client(ip,port,this);
                 client.connect();
+                progress = new ProgressDialog(this);
+                progress.setTitle("Connecting");
+                progress.setMessage("Wait while connecting...");
+                progress.setCancelable(false);
+                progress.show();
+
             }
             else return;
 

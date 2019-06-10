@@ -62,7 +62,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:digits="012346789."
+                        android:digits="0123456789."
                         android:ems="8"
                         android:id="@+id/editTextIp"/>
                 <TextView android:textSize="30dp"  android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":"/>
@@ -71,7 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:digits="012346789"
+                        android:digits="0123456789"
                         android:ems="4"
                         android:id="@+id/editTextPort"/>
             </LinearLayout>
