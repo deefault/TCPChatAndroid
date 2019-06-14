@@ -99,7 +99,7 @@ public class MainActivity extends ServiceActivity {
         }
         else {
             server.stop();
-
+            ipTextView.setText("Server stopped");
             server = null;
             startServerButton.setEnabled(true);
             view.setEnabled(false);

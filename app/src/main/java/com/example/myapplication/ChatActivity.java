@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -63,12 +64,17 @@ public class ChatActivity extends ServiceActivity {
         messageAdapter.add(message);
         // scroll the ListView to the last added element
         messagesView.setSelection(messagesView.getCount() - 1);
-        try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (message.isFromCurrentUser()){
+            messagesView.playSoundEffect(SoundEffectConstants.CLICK);
+        }
+        else {
+            try {
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                r.play();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
